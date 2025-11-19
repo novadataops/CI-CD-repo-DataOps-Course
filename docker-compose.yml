@@ -1,0 +1,20 @@
+---
+services:
+  app1:
+    build: ./app1
+    container_name: log_scanner
+    volumes:
+      - /var/log:/var/log:ro
+      - shared-data:/shared
+  app2:
+    build: ./app2
+    container_name: web_errors
+    depends_on:
+      - app1
+    ports:
+      - "5000:5000"
+    volumes:
+      - shared-data:/shared
+
+volumes:
+  shared-data:
