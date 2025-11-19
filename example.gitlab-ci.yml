@@ -1,0 +1,30 @@
+stages:        
+  - test
+  - build
+  - deploy
+
+yaml-test-syntax-job:  # проверка docker compose файла на синтаксис
+  stage: test   
+  script:
+    - yamllint docker-compose.yml
+
+python-test-syntax-job:  # рекурсивная проверка всех пайтон файлов стандартными средствами, в проде лучше указывать на файлы.
+  stage: test  
+  script:
+    - python3 -m compileall -q . 
+
+build-job:
+  stage: build
+  script:
+    - echo "Собираем Docker образы..."
+    - docker compose build --no-cache
+    - echo "Образы собраны!"  
+
+deploy-job:      # Деплой проекта
+  stage: deploy  
+  script:
+    - echo "Запускаем приложение..."
+    - docker compose up -d
+    - sleep 5
+    - docker compose ps
+    - echo "Приложение запущено и доступно по адресу http://192.168.1.81:5000"
